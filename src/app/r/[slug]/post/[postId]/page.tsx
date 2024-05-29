@@ -10,6 +10,7 @@ import { Post, User, Vote } from '@prisma/client'
 import { ArrowBigDown, ArrowBigUp, Loader2 } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
+import Menu from '@/components/Menu' // Import Menu component
 
 interface SubRedditPostPageProps {
   params: {
@@ -61,14 +62,23 @@ const SubRedditPostPage = async ({ params }: SubRedditPostPageProps) => {
           />
         </Suspense>
 
-        <div className='sm:w-0 w-full flex-1 bg-white p-4 rounded-sm'>
-          <p className='max-h-40 mt-1 truncate text-xs text-gray-500'>
-            Posted by u/{post?.author.username ?? cachedPost.authorUsername}{' '}
-            {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
-          </p>
-          <h1 className='text-xl font-semibold py-2 leading-6 text-gray-900'>
-            {post?.title ?? cachedPost.title}
-          </h1>
+        <div className='sm:w-0 w-full flex-1 bg-white p-4 rounded-sm relative'>
+          <div className="flex justify-between items-start">
+            <div>
+              <p className='max-h-40 mt-1 truncate text-xs text-gray-500'>
+                Posted by u/{post?.author.username ?? cachedPost.authorUsername}{' '}
+                {formatTimeToNow(new Date(post?.createdAt ?? cachedPost.createdAt))}
+              </p>
+              <h1 className='text-xl font-semibold py-2 leading-6 text-gray-900'>
+                {post?.title ?? cachedPost.title}
+              </h1>
+            </div>
+            <Menu
+              postId={post?.id ?? cachedPost.id}
+              postTitle={post?.title ?? cachedPost.title}
+              postContent={JSON.stringify(post?.content ?? cachedPost.content)} // Ensure content is a string
+            />
+          </div>
 
           <EditorOutput content={post?.content ?? cachedPost.content} />
           <Suspense
