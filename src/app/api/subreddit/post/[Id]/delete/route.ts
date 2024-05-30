@@ -11,10 +11,12 @@ export async function DELETE(req: Request) {
     }
 
     const url = new URL(req.url)
-    const id = url.pathname.split('/').pop() // Extracting the ID from the URL
+    const pathname = url.pathname
+    const pathSegments = pathname.split('/')
+    const postId = pathSegments[pathSegments.length - 1] // Extracting the ID from the URL
 
     const post = await db.post.findUnique({
-      where: { id },
+      where: { id: postId },
     })
 
     if (post?.authorId !== session.user.id) {
@@ -37,20 +39,24 @@ export async function DELETE(req: Request) {
 
     // Delete the post from the database
     await db.post.delete({
-      where: { id },
+      where: { id: postId },
     })
 
     // Delete the image from UploadThing if it exists
     if (imageUrl) {
       try {
-        await axios.delete(imageUrl)
+        await axios.delete(`https://api.uploadthing.com/v1/files/${imageUrl}`, {
+          headers: {
+            'Authorization': `Bearer ${process.env.UPLOADTHING_SECRET}`,
+          },
+        })
       } catch (error) {
         console.error('Error deleting image from UploadThing:', error)
       }
     }
 
     // Remove post data from Redis cache
-    await redis.del(`post:${id}`)
+    await redis.del(`post:${postId}`)
 
     return new Response('OK')
   } catch (error) {

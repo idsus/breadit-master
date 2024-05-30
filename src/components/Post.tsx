@@ -83,11 +83,13 @@ const Post: FC<PostProps> = ({
           </div>
         </div>
 
-        <Menu
-          postId={post.id}
-          postTitle={post.title}
-          postContent={JSON.stringify(post.content)}
-        />
+        <div onClick={(e) => e.stopPropagation()}>
+          <Menu
+            postId={post.id}
+            postTitle={post.title}
+            postContent={JSON.stringify(post.content)}
+          />
+        </div>
       </div>
 
       <div className="bg-gray-50 z-20 text-sm px-4 py-4 sm:px-6 flex justify-between">
