@@ -28,7 +28,7 @@ const Menu: FC<MenuProps> = ({ postId, postTitle, postContent }) => {
 
   const handleEdit = async () => {
     try {
-      await axios.patch(`/api/posts/${postId}/edit`, { title, content })
+      await axios.patch(`/api/post/${postId}/edit`, { title, content })
       setIsEditing(false)
       router.refresh()
     } catch (error) {
@@ -38,7 +38,7 @@ const Menu: FC<MenuProps> = ({ postId, postTitle, postContent }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/posts/${postId}/delete`)
+      await axios.delete(`/api/post/${postId}/delete`)
       router.push('/')
     } catch (error) {
       console.error('Failed to delete post:', error)
